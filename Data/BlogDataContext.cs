@@ -1,15 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Blog.Models;
 using Blog.Data.Mappings;
+using Microsoft.EntityFrameworkCore.Sqlite;
 
 namespace Blog.Data;
 
 public class BlogDataContext : DbContext{
     public DbSet<Usuario> Usuarios {get;set;}
     public DbSet<Post> Posts {get;set;}
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        base.OnConfiguring(optionsBuilder);
+       options.UseSqlite("Data Source=blog.db");
     }
    protected override void OnModelCreating(ModelBuilder modelBuilder)
 {

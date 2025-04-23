@@ -13,9 +13,28 @@ public class PostMap : IEntityTypeConfiguration<Post>{
         builder.Property(x => x.Body).IsRequired();
         builder.Property(x => x.CriadoEm).HasDefaultValueSql("GETDATE()");
 
-        builder.HasOne(X => X.Autor).WithMany(X => X.Posts)
-        .HasForeignKey(x => x.AutorId)
+        builder.HasOne(post => post.Autor)
+        .WithMany(usuario => usuario.Posts)
+        .HasForeignKey(post => post.AutorId)
         .HasConstraintName("FK_Post_Autor")
         .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(x => x.categoria)
+            .WithMany(x => x.Posts)
+            .HasForeignKey(x => x.CategoriaId)
+            .HasConstraintName("FK_Post_Category")
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasMany(x => x.Tags)
+            .WithMany(x => x.Posts)
+            .UsingEntity<Dictionary<string, object>>(
+            "PostTag",
+            tag => tag.HasOne<Tag>()
+                  .WithMany()
+                  .HasForeignKey("TagId")
+                  .HasConstraintName("FK_PostTag_TagId"),
+            post => post.HasOne<Post>()
+                   .WithMany()
+                   .HasForeignKey("PostId")
+                   .HasConstraintName("FK_PostTag_PostId")
+        );
     }
 }
